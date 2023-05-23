@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import {
+  Alert,
   Image,
   Modal,
+  PermissionsAndroid,
   Text,
   TextInput,
   TouchableOpacity,
@@ -9,11 +11,59 @@ import {
 } from 'react-native';
 import globalStyles from '../config/styles';
 import {useNavigation} from '@react-navigation/native';
+import Geolocation from 'react-native-geolocation-service';
 
 const GetLocationScreen = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [pincode, setPincode] = useState('');
+
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'App Location Permission',
+          message:
+            'App needs access to your location ' +
+            'so you can have awesome service.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the Location');
+        Geolocation.getCurrentPosition(
+          position => {
+            routeToNextScreen(
+              position?.coords?.latitude,
+              position?.coords?.longitude,
+            );
+          },
+          error => {
+            // See error code charts below.
+            Alert.alert('Something went wrong!');
+            console.log(error.code, error.message);
+          },
+          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+        );
+      } else {
+        Alert.alert('Please give Location permission!');
+        console.log('Location permission denied');
+      }
+    } catch (err) {
+      Alert.alert('Something went wrong!');
+      console.warn(err);
+    }
+  };
+
+  const routeToNextScreen = (latitude, longitude) => {
+    navigation.navigate('Result', {
+      lat: latitude,
+      lng: longitude,
+    });
+  };
 
   return (
     <>
@@ -31,7 +81,9 @@ const GetLocationScreen = () => {
           <TouchableOpacity
             style={styles.currentlocationBtn}
             activeOpacity={0.6}
-            onPress={() => navigation.navigate('Result')}>
+            onPress={() => {
+              requestLocationPermission();
+            }}>
             <Text style={styles.buttonText}>User Current Location</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -75,8 +127,14 @@ const GetLocationScreen = () => {
                 style={styles.submitPincodeBtn}
                 activeOpacity={0.6}
                 onPress={() => {
-                  setModalVisible(false);
-                  navigation.navigate('Result');
+                  if (pincode.length < 6 || pincode.length > 6) {
+                    Alert.alert('Please Enter a valid pincode!');
+                  } else {
+                    setModalVisible(false);
+                    navigation.navigate('Result', {
+                      pincode: pincode,
+                    });
+                  }
                 }}>
                 <Text style={styles.buttonText}>SUBMIT</Text>
               </TouchableOpacity>
@@ -173,7 +231,7 @@ const styles = globalStyles(({colors, typography, transparentColors}) => ({
     padding: '4%',
     fontSize: 16,
     width: '100%',
-    colors: colors.textBlack800,
+    color: colors.textBlack800,
     fontFamily: typography.regular,
   },
   submitPincodeBtn: {

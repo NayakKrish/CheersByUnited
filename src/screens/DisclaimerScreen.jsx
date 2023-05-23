@@ -105,7 +105,7 @@ const styles = globalStyles(({colors, typography}) => ({
   },
   desctext: {
     color: colors.textBlack600,
-    fonstSize: 15,
+    fontSize: 15,
     textAlign: 'center',
     padding: '10%',
   },
@@ -136,7 +136,7 @@ const styles = globalStyles(({colors, typography}) => ({
   },
   termsandconditionText: {
     color: colors.textBlack600,
-    fonstSize: 15,
+    fontSize: 15,
     textAlign: 'center',
     paddingRight: '5%',
     paddingLeft: '5%',
