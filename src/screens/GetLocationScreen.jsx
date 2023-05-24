@@ -178,8 +178,8 @@ const styles = globalStyles(({colors, typography, transparentColors}) => ({
     gap: 20,
   },
   image: {
-    width: 350,
-    height: 350,
+    width: '40%',
+    height: '40%',
   },
   mainText: {
     color: colors.textBlack800,

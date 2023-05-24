@@ -112,10 +112,10 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('cheersbyunited.keystore')
-            storePassword '123456'
+            storeFile file('debug.keystore')
+            storePassword 'android'
             keyAlias 'androiddebugkey'
-            keyPassword '123456'
+            keyPassword 'android'
         }
         release {
             storeFile file('cheersbyunited.keystore')

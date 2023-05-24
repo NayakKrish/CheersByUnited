@@ -72,8 +72,8 @@ const styles = globalStyles(({colors, typography}) => ({
     backgroundColor: colors.white,
   },
   image: {
-    width: 300,
-    height: 300,
+    width: '40%',
+    height: '40%',
   },
   confirmContainer: {
     width: '80%',
