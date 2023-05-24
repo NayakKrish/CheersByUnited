@@ -4,6 +4,7 @@ import {
   Image,
   Modal,
   PermissionsAndroid,
+  Platform,
   Text,
   TextInput,
   TouchableOpacity,
@@ -20,37 +21,59 @@ const GetLocationScreen = () => {
 
   const requestLocationPermission = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'App Location Permission',
-          message:
-            'App needs access to your location ' +
-            'so you can have awesome service.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the Location');
-        Geolocation.getCurrentPosition(
-          position => {
-            routeToNextScreen(
-              position?.coords?.latitude,
-              position?.coords?.longitude,
-            );
-          },
-          error => {
-            // See error code charts below.
-            Alert.alert('Something went wrong!');
-            console.log(error.code, error.message);
-          },
-          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-        );
+      if (Platform.OS === 'ios') {
+        const status = await Geolocation.requestAuthorization('whenInUse');
+        if (status === 'granted') {
+          Geolocation.getCurrentPosition(
+            position => {
+              const {latitude, longitude} = position.coords;
+              routeToNextScreen(latitude, longitude);
+            },
+            error => {
+              Alert.alert('Something went wrong!');
+              console.log(error.code, error.message);
+            },
+            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+          );
+        } else {
+          // Permission denied
+          Alert.alert(
+            'Location Permission',
+            'Please grant location permission to use this feature.',
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          );
+        }
       } else {
-        Alert.alert('Please give Location permission!');
-        console.log('Location permission denied');
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'App Location Permission',
+            message:
+              'App needs access to your location ' +
+              'so you can have awesome service.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('You can use the Location');
+          Geolocation.getCurrentPosition(
+            position => {
+              const {latitude, longitude} = position.coords;
+              routeToNextScreen(latitude, longitude);
+            },
+            error => {
+              // See error code charts below.
+              Alert.alert('Something went wrong!');
+              console.log(error.code, error.message);
+            },
+            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+          );
+        } else {
+          Alert.alert('Please give Location permission!');
+          console.log('Location permission denied');
+        }
       }
     } catch (err) {
       Alert.alert('Something went wrong!');

@@ -36,13 +36,9 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>$(PRODUCT_NAME) Will Access your Location to find Neares Service for you</string>
+	<string>Your location is required to provide relevant information.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>$(PRODUCT_NAME) Will Access your Location to find Neares Service for you </string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>$(PRODUCT_NAME) Will Access your Location to find Neares Service for you </string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>$(PRODUCT_NAME) Will Access your Location to find Neares Service for you </string>
+	<string>Your location is required to provide relevant information.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Bold.ttf</string>
